@@ -17,14 +17,14 @@ from walk_forward_optimization import walk_forward_optimization, aggregate_walk_
 
 def main():
     # Set the working directory explicitly
-    os.chdir("/Users/niccolo/Desktop/Quant Finance/Code/BlackBoxes")
+    os.chdir("/home/njacimov/Quantitative-Finance-Project")
     print(f"Current working directory: {os.getcwd()}")
 
     # Constants
-    DATA_FOLDER = "/Users/niccolo/Desktop/Quant Finance/Code/Returns_and_Backtest/FOREX/Algo_Trading/data/2y_1h_OHLC_FOREX"
+    DATA_FOLDER = "/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX"
     INITIAL_CAPITAL = 100000
-    COMMISSION = 0.0001
-    RISK_FREE_RATE = 0.02
+    COMMISSION = 0.02
+    RISK_FREE_RATE = 0.0456
 
     # Create a timestamp for the results folder
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -35,19 +35,19 @@ def main():
 
     # Parameter ranges
     param_ranges = {
-        'position_size': np.arange(0.1, 1.0, 0.5),
-        'atr_period': range(3, 15, 6),
-        'high_period': range(3, 15, 6),
-        'lower_band_multiplier': np.arange(1.5, 3.0, 1),
-        'upper_band_multiplier': np.arange(1.5, 3.0, 1),
-        'long_size': np.arange(0.2, 1.0, 0.4),
-        'short_size': np.arange(0.2, 1.0, 0.4)
+        'position_size': np.arange(0.1, 1.0, 0.1),
+        'atr_period': range(3, 15, 3),
+        'high_period': range(3, 15, 3),
+        'lower_band_multiplier': np.arange(1.5, 3.0, .25),
+        'upper_band_multiplier': np.arange(1.5, 3.0, .25),
+        'long_size': np.arange(0.2, 1.0, 0.1),
+        'short_size': np.arange(0.2, 1.0, 0.1)
     }
 
     optimization_targets = ['sharpe', 'return']
 
     # Get the first 10 currency pairs from the data folder
-    currency_pairs = get_currency_pairs(DATA_FOLDER, limit=10)
+    currency_pairs = get_currency_pairs(DATA_FOLDER, limit=40)
 
     all_results = {target: [] for target in optimization_targets}
     top_performers = []
