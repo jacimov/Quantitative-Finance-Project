@@ -1,0 +1,2 @@
+currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
+/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/CZK_USD_hourly_data_yahoo,return,0.9000000000000001,6,6,2.0,1.875,0.8,0.8,6.98256224746792,6.98256224746792,-0.16305024431653414,-0.8770592161947061,-4.487424653882207,-2.5474402497655375,12307.902693309432

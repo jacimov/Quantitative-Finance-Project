@@ -1,0 +1,2 @@
+currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
+/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/EUR_CHF_hourly_data_yahoo,return,0.9000000000000001,3,8,2.0,1.5,0.8,0.8,6.380379678616242,6.380379678616242,-0.2136904782227984,-0.9410717079468973,-4.9589380271980685,-3.438060972548684,5892.8292053102605

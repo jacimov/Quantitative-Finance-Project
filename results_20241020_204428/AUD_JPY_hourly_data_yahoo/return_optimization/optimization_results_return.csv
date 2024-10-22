@@ -1,0 +1,2 @@
+currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
+/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/AUD_JPY_hourly_data_yahoo,return,0.9000000000000001,6,3,2.5,2.125,0.8,0.5,1.6928831561892075,1.6928831561892075,-0.13178266405528338,-0.8112004266006475,-4.833345400559275,-2.6925588308978154,18941.880771331736

@@ -1,0 +1,2 @@
+currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
+/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/DKK_USD_hourly_data_yahoo,sharpe,0.9000000000000001,13,13,1.5,1.5,0.8,0.8,-1.8862151621340106,-1.8862151621340106,-0.4185594854186775,-0.998260925226485,-7.195080823700849,-5.746785233378505,173.9454927469093
