@@ -17,7 +17,10 @@ This project provides a robust implementation of a technical analysis-based trad
 BlackBoxes/
 ├── trading_strategy.py     # Core trading strategy implementation
 ├── backtesting_runner.py   # Backtesting execution and configuration
+├── live_trader.py         # Live trading implementation
 ├── utils.py               # Utility functions
+├── requirements.txt       # Project dependencies
+├── Ketler.qmd            # Quarto document with strategy documentation
 └── tests/                 # Test suite
     ├── test_backtesting_runner.py
     └── run_tests.py
@@ -37,6 +40,13 @@ BlackBoxes/
   - Comprehensive performance metrics
   - Trade history and equity curve analysis
 
+- **Live Trading Implementation**
+  - Real-time market data streaming
+  - Automated trade execution
+  - Position management and risk monitoring
+  - Configurable trading parameters
+  - Detailed logging and error handling
+
 ## Installation
 
 1. Clone the repository:
@@ -47,7 +57,7 @@ cd BlackBoxes
 
 2. Install required dependencies:
 ```bash
-pip install backtesting numpy pandas
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -83,6 +93,37 @@ results = run_single_backtest(
 
 # Access performance metrics
 print(results.metrics)
+```
+
+### Running Live Trading
+
+```python
+from live_trader import LiveTrader
+
+# Initialize the live trader
+trader = LiveTrader(
+    exchange_id='binance',  # or your preferred exchange
+    symbol='BTC/USDT',      # trading pair
+    timeframe='5m',         # candle timeframe
+    api_key='YOUR_API_KEY',
+    api_secret='YOUR_API_SECRET'
+)
+
+# Start trading
+trader.run()
+```
+
+### Documentation
+
+The `Ketler.qmd` file contains detailed documentation about the trading strategy implementation, including:
+- Technical analysis methodology
+- Strategy parameters and optimization
+- Performance analysis and insights
+- Implementation details
+
+To view the documentation, use Quarto to render the document:
+```bash
+quarto render Ketler.qmd
 ```
 
 ### Running Tests
