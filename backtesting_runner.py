@@ -47,7 +47,41 @@ def run_single_backtest(
             - Trade history
             - Equity curve
             - Position sizes and values
+
+    Raises:
+        ValueError: If required parameters are missing or invalid
     """
+    # Validate data
+    required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+    if not all(col in data.columns for col in required_columns):
+        raise ValueError(
+            f"Data must contain all required columns: {required_columns}"
+        )
+
+    # Validate parameters
+    required_params = [
+        'position_size',
+        'atr_period',
+        'high_period',
+        'low_period',
+        'lower_band_multiplier',
+        'upper_band_multiplier',
+        'long_size',
+        'short_size'
+    ]
+    if not all(param in params for param in required_params):
+        raise ValueError(
+            f"Parameters must contain all required fields: {required_params}"
+        )
+
+    # Validate numeric parameters
+    for param, value in params.items():
+        if not isinstance(value, (int, float)):
+            raise ValueError(
+                f"Parameter {param} must be numeric, got {type(value)}"
+            )
+
+    # Create and run backtest
     bt = Backtest(
         data,
         OptimizedLongShortStrategy,

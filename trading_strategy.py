@@ -165,6 +165,45 @@ class OptimizedLongShortStrategy(Strategy):
         """
         return self.low + self.upper_band_multiplier * self.atr
 
+    def calculate_position_size(self, price, direction=1):
+        """
+        Calculate position size with constraints.
+
+        This method calculates the position size while enforcing:
+        1. Maximum leverage limit (5x)
+        2. Maximum position size (95% of capital)
+        3. Direction-specific size multipliers
+
+        Args:
+            price (float): Current price for position sizing
+            direction (int): 1 for long positions, -1 for short positions
+
+        Returns:
+            float: Position size in units
+        """
+        # Maximum allowed leverage (5x)
+        MAX_LEVERAGE = 5.0
+        # Maximum position size (95% of capital)
+        MAX_POSITION = 0.95
+        
+        # Get direction-specific size multiplier
+        size_multiplier = self.long_size if direction > 0 else self.short_size
+        
+        # Calculate base position value
+        base_value = self.equity * min(self.position_size * size_multiplier, MAX_POSITION)
+        
+        # Calculate maximum value based on leverage constraint
+        max_leverage_value = MAX_LEVERAGE * self.equity
+        
+        # Calculate constrained value
+        constrained_value = min(base_value, max_leverage_value)
+        
+        # Convert to units
+        units = constrained_value / price
+        
+        # Round to nearest whole number of units
+        return round(units)
+
     def next(self):
         """
         Execute trading logic for the current candle.
@@ -175,18 +214,25 @@ class OptimizedLongShortStrategy(Strategy):
            - Short: Price above upper band
         2. Position sizing:
            - Uses base position size modified by long/short multipliers
-           - Caps position size at 0.99 (99% of available capital)
+           - Caps position size at 95% of available capital
+           - Ensures reasonable leverage (max 5x)
+           - Uses whole units for position sizes
         3. Exit conditions:
            - Long: Price exceeds previous high
            - Short: Price falls below previous low
         """
         if not self.position:
-            if self.data.Close[-1] < self.lower_band[-1]:
-                size = min(self.position_size * self.long_size, 0.99)
-                self.buy(size=size)
-            elif self.data.Close[-1] > self.upper_band[-1]:
-                size = min(self.position_size * self.short_size, 0.99)
-                self.sell(size=size)
+            price = self.data.Close[-1]
+            if price < self.lower_band[-1]:
+                # Enter long position with whole units
+                units = self.calculate_position_size(price, direction=1)
+                if units > 0:  # Only trade if we have at least 1 unit
+                    self.buy(size=units)
+            elif price > self.upper_band[-1]:
+                # Enter short position with whole units
+                units = self.calculate_position_size(price, direction=-1)
+                if units > 0:  # Only trade if we have at least 1 unit
+                    self.sell(size=units)
         elif self.position.is_long and self.data.Close[-1] > self.data.High[-2]:
             self.position.close()
         elif self.position.is_short and self.data.Close[-1] < self.data.Low[-2]:
