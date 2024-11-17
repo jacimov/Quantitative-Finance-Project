@@ -1,14 +1,20 @@
 # daily_currency_updater.py
-import yfinance as yf
-import pandas as pd
-from datetime import datetime, timedelta
-import time
 import os
+import time
+from datetime import datetime, timedelta
+
+import pandas as pd
+import yfinance as yf
+
 
 def fetch_hourly_data(symbol, start_date, end_date):
     try:
         ticker = yf.Ticker(symbol)
-        df = ticker.history(start=start_date, end=end_date, interval="1h")
+        df = ticker.history(
+            start=start_date,
+            end=end_date,
+            interval="1h"
+        )
         if df.empty:
             print(f"No hourly data available for {symbol}")
             return None
@@ -19,35 +25,45 @@ def fetch_hourly_data(symbol, start_date, end_date):
         print(f"Error fetching data for {symbol}: {str(e)}")
         return None
 
+
 def fetch_and_update_currency_data(currency_pairs):
     end_date = datetime.now()
-    start_date = end_date - timedelta(days=2)  # Fetch last 2 days of data to ensure we don't miss any
+    # Fetch last 2 days of data to ensure we don't miss any
+    start_date = end_date - timedelta(days=2)
 
     for from_currency, to_currency in currency_pairs:
         symbol = f"{from_currency}{to_currency}=X"
         pair = f"{from_currency}/{to_currency}"
         filename = f"{pair.replace('/', '_')}_hourly_data_yahoo.csv"
-        
+
         print(f"Updating data for {pair}")
-        
+
         # Fetch new data
         new_data = fetch_hourly_data(symbol, start_date, end_date)
         if new_data is None or new_data.empty:
             continue
-        
-        # If file exists, read it and append new data, otherwise create new file
+
+        # If file exists, read it and append new data, otherwise create file
         if os.path.exists(filename):
-            existing_data = pd.read_csv(filename, index_col=0, parse_dates=True)
-            existing_data = existing_data[~existing_data.index.isin(new_data.index)]  # Remove any overlapping dates
+            existing_data = pd.read_csv(
+                filename,
+                index_col=0,
+                parse_dates=True
+            )
+            # Remove any overlapping dates
+            existing_data = existing_data[
+                ~existing_data.index.isin(new_data.index)
+            ]
             updated_data = pd.concat([existing_data, new_data]).sort_index()
         else:
             updated_data = new_data
-        
+
         # Save updated data
         updated_data.to_csv(filename)
         print(f"Updated {filename} with {len(new_data)} new rows")
-        
+
         time.sleep(1)  # Small delay to be kind to the server
+
 
 # Extended list of currency pairs
 currency_pairs = [
@@ -62,6 +78,7 @@ currency_pairs = [
     ('EUR', 'GBP'), ('EUR', 'JPY'), ('GBP', 'JPY'), ('AUD', 'JPY'),
     ('EUR', 'CHF'), ('GBP', 'CHF'), ('EUR', 'AUD'), ('EUR', 'CAD')
 ]
+
 
 if __name__ == "__main__":
     fetch_and_update_currency_data(currency_pairs)
