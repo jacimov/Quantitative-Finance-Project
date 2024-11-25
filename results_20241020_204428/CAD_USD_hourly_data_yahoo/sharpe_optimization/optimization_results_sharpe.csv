@@ -1,2 +1,0 @@
-currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
-/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/CAD_USD_hourly_data_yahoo,sharpe,0.9000000000000001,13,13,1.75,1.5,0.8,0.8,-2.4417902199540915,-2.4417902199540915,-0.2545426391391432,-0.968980007915271,-5.4017340176320445,-3.7565528937462296,3103.525591694048

@@ -1,2 +1,0 @@
-currency_pair,optimization_target,position_size,atr_period,high_period,lower_band_multiplier,upper_band_multiplier,long_size,short_size,avg_train_metric,avg_test_metric,final_test_annualized_return,final_test_max_drawdown,final_test_sharpe_ratio,final_test_sortino_ratio,final_test_end_equity
-/home/njacimov/Algo_Trading/data/2y_1h_OHLC_FOREX/AED_USD_hourly_data_yahoo,sharpe,0.9000000000000001,8,10,1.5,1.5,0.8,0.8,-30.152820755048275,-30.152820755048275,-0.162644506988042,-0.8050423747278581,-4.536970946245414,-2.3445178529582305,19497.344392942097
