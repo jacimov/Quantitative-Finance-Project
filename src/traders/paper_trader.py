@@ -73,9 +73,10 @@ class AlpacaPaperTrader(PaperTrader):
             api_secret: Alpaca API secret
         """
         self.api = tradeapi.REST(
-            api_key,
-            api_secret,
-            base_url='https://paper-api.alpaca.markets'
+            key_id=api_key,
+            secret_key=api_secret,
+            base_url='https://paper-api.alpaca.markets',
+            api_version='v2'
         )
         logger.info("Initialized Alpaca paper trading client")
 

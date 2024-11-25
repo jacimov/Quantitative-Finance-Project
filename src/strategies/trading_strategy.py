@@ -237,3 +237,57 @@ class OptimizedLongShortStrategy(Strategy):
             self.position.close()
         elif self.position.is_short and self.data.Close[-1] < self.data.Low[-2]:
             self.position.close()
+
+    def next_signal(self, data):
+        """
+        Generate trading signals based on the current market data.
+
+        Args:
+            data: DataFrame with OHLCV data
+
+        Returns:
+            Dict with signal details or None if no signal
+        """
+        self.data = data
+        
+        # Calculate indicators
+        self.atr = self.calculate_atr(self.atr_period)
+        self.high = self.calculate_high(self.high_period)
+        self.low = self.calculate_low(self.low_period)
+        self.lower_band = self.calculate_lower_band()
+        self.upper_band = self.calculate_upper_band()
+        
+        price = data.Close.iloc[-1]
+        
+        # Check for signals
+        if price < self.lower_band[-1]:
+            # Long signal
+            units = self.calculate_position_size(price, direction=1)
+            if units > 0:
+                return {
+                    'action': 'buy',
+                    'size': units
+                }
+        elif price > self.upper_band[-1]:
+            # Short signal
+            units = self.calculate_position_size(price, direction=-1)
+            if units > 0:
+                return {
+                    'action': 'sell',
+                    'size': units
+                }
+                
+        # Check for exit signals
+        if hasattr(self, 'position') and self.position:
+            if self.position.is_long and price > data.High.iloc[-2]:
+                return {
+                    'action': 'sell',  # Close long position
+                    'size': self.position.size
+                }
+            elif self.position.is_short and price < data.Low.iloc[-2]:
+                return {
+                    'action': 'buy',  # Close short position
+                    'size': self.position.size
+                }
+        
+        return None
