@@ -38,6 +38,7 @@ from walk_forward_optimization import (
     aggregate_walk_forward_results,
     walk_forward_optimization
 )
+from backtesting_runner import run_single_backtest
 
 
 def main():

@@ -28,17 +28,16 @@ import os
 from datetime import datetime
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import json
 from data_processing import get_currency_pairs, load_forex_data
 from train_test_split import split_data
 from utils import (
     calculate_annualized_return,
     calculate_max_drawdown,
     calculate_sharpe_ratio,
-    calculate_sortino_ratio
+    calculate_sortino_ratio,
+    plot_equity_curves
 )
-from visualization import plot_equity_curves, plot_heatmaps
+from backtesting_runner import run_single_backtest
 from walk_forward_optimization import (
     aggregate_walk_forward_results,
     walk_forward_optimization
@@ -155,7 +154,12 @@ def main():
                 print("---")
 
             # Generate visualizations
-            plot_heatmaps(wfo_results, param_ranges, target, currency_folder)
+            plot_equity_curves(
+                result['equity_curve'],
+                test_data,
+                CURRENCY_PAIR,
+                currency_folder
+            )
 
             # Aggregate optimization results
             best_params, avg_train_metric, avg_test_metric = (
@@ -211,18 +215,6 @@ def main():
             }
 
             all_results[target].append(result)
-
-            # Calculate and plot benchmark comparison
-            buy_hold_equity = (INITIAL_CAPITAL *
-                               (1 + test_data['Close'].pct_change().cumsum()))
-
-            plot_equity_curves(
-                equity_curve,
-                buy_hold_equity,
-                test_data,
-                CURRENCY_PAIR,
-                currency_folder
-            )
 
             # Save results
             target_folder = os.path.join(

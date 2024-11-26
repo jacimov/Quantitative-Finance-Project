@@ -160,7 +160,7 @@ class PaperTradingRunner:
                                 type='market',
                                 qty=signal['size']
                             )
-                            print(f"  ✅ Order placed successfully")
+                            print("✅ Order placed successfully")
                         except Exception as e:
                             print(f"  ❌ Error placing order: {e}")
                     else:
