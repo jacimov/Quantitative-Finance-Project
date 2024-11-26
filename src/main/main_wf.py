@@ -25,16 +25,12 @@ The script follows a systematic approach:
 """
 
 import os
-from collections import Counter
 from datetime import datetime
-from itertools import product
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-
-from backtesting_runner import run_single_backtest
+import matplotlib.pyplot as plt
+import json
 from data_processing import get_currency_pairs, load_forex_data
-from optimization import run_backtest_with_params
 from train_test_split import split_data
 from utils import (
     calculate_annualized_return,

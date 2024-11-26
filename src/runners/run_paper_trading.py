@@ -124,26 +124,13 @@ class PaperTradingRunner:
             setattr(strategy, param, value)
 
         # Generate signals
-        last_close = data['Close'].iloc[-1]
-        last_high = data['High'].iloc[-1]
-        last_low = data['Low'].iloc[-1]
-
-        # Get current position
-        positions = self.trader.get_positions()
-        current_position = next(
-            (pos for pos in positions if pos['symbol'] == symbol),
-            None
-        )
-
-        # Get next signal from strategy
         signal = strategy.next_signal(data)
 
         if signal:
             return {
                 'symbol': symbol,
                 'action': signal['action'],  # 'buy' or 'sell'
-                'qty': signal['size'],
-                'price': last_close,
+                'size': signal['size'],
                 'type': 'market'
             }
 
@@ -153,11 +140,6 @@ class PaperTradingRunner:
         """Main trading loop."""
         while True:
             try:
-                current_positions = {
-                    pos['symbol']: pos
-                    for pos in self.trader.get_positions()
-                }
-
                 for symbol in self.symbols:
                     current_time = datetime.now().strftime('%H:%M:%S')
                     print(f"\nChecking {symbol} at {current_time}")
@@ -166,45 +148,23 @@ class PaperTradingRunner:
                     if signal:
                         action = signal['action']
                         size = signal['size']
-                        current_price = (self.get_market_data(symbol)['Close']
-                                         .iloc[-1])
-
-                        # Determine if this is an entry or exit
-                        is_entry = symbol not in current_positions
-                        action_type = 'Opening' if is_entry else 'Closing'
 
                         print(f"\n🔔 SIGNAL for {symbol}:")
-                        print(f"  {action_type} {action.upper()} position")
+                        print(f"  Opening {action.upper()} position")
                         print(f"  Size: {size} units")
-                        print(f"  Price: ${current_price:.2f}")
 
                         try:
-                            order = self.trader.place_order(
+                            self.trader.place_order(
                                 symbol=signal['symbol'],
-                                qty=signal['qty'],
                                 side=signal['action'],
-                                order_type=signal['type']
+                                type='market',
+                                qty=signal['size']
                             )
                             print(f"  ✅ Order placed successfully")
                         except Exception as e:
                             print(f"  ❌ Error placing order: {e}")
                     else:
-                        # Show current position status if we have one
-                        if symbol in current_positions:
-                            pos = current_positions[symbol]
-                            current_price = (self.get_market_data(
-                                symbol)['Close'] .iloc[-1])
-                            entry_price = float(pos['avg_entry_price'])
-                            qty = float(pos['qty'])
-                            unrealized_pl = (current_price - entry_price) * qty
-                            if pos['side'] == 'short':
-                                unrealized_pl = -unrealized_pl
-
-                            print(f"  Current {pos['side'].upper()} position:")
-                            print(f"  Size: {pos['qty']} units")
-                            print(f"  Entry: ${entry_price:.2f}")
-                            print(f"  Current: ${current_price:.2f}")
-                            print(f"  P&L: ${unrealized_pl:.2f}")
+                        print("Checking markets...")
 
                 time.sleep(self.check_interval)
 
