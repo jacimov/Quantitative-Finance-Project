@@ -110,30 +110,30 @@ def calculate_sortino_ratio(equity_curve, risk_free_rate, target_return=0):
     """
     if isinstance(equity_curve, np.ndarray):
         equity_curve = pd.Series(equity_curve)
-    
+
     # Calculate returns
     returns = equity_curve.pct_change().dropna()
-    
+
     # If no returns, return 0
     if len(returns) == 0:
         return 0
-    
+
     # Calculate annualized excess return
     excess_return = returns.mean() * 252 - risk_free_rate
-    
+
     # Calculate downside returns (returns below target)
     downside_returns = returns[returns < target_return]
-    
+
     # If no downside returns, return a high value for positive excess return
     # or 0 for negative excess return
     if len(downside_returns) == 0:
         return np.inf if excess_return > 0 else 0
-    
+
     # Calculate downside deviation (annualized)
     downside_std = np.sqrt(np.mean(downside_returns ** 2) * 252)
-    
+
     # Handle zero downside deviation
     if downside_std == 0:
         return np.inf if excess_return > 0 else 0
-    
+
     return excess_return / downside_std

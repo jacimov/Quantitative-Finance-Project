@@ -67,7 +67,12 @@ def run_backtest_with_params(args):
     return params, train_metric, test_metric
 
 
-def optimize_strategy(train_data, test_data, param_ranges, optimization_target):
+def optimize_strategy(
+    train_data,
+    test_data,
+    param_ranges,
+    optimization_target
+):
     """
     Optimize strategy parameters using parallel processing.
 

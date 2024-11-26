@@ -148,7 +148,9 @@ def main():
             print("Debug: First few WFO results:")
             for result in wfo_results[:3]:
                 print(
-                    f"Start: {result['start_date']}, End: {result['end_date']}")
+                    f"Start: {result['start_date']}, "
+                    f"End: {result['end_date']}"
+                )
                 print(f"Best params: {result['best_params']}")
                 print(
                     f"Train metric: {result['train_metric']}, "
@@ -252,7 +254,7 @@ def main():
     summary_stats = {}
     for target in optimization_targets:
         results_df = pd.DataFrame(all_results[target])
-        
+
         summary_stats[target] = {
             'mean_return': results_df['final_test_annualized_return'].mean(),
             'mean_sharpe': results_df['final_test_sharpe_ratio'].mean(),

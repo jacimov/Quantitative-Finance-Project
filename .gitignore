@@ -19,6 +19,9 @@ ENV/
 *.swp
 *.swo
 
+# Private Keys
+kalshi_private_key.pem
+
 # OS
 .DS_Store
 Thumbs.db

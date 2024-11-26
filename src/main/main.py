@@ -64,8 +64,7 @@ def main():
         for target in optimization_targets:
             print(f"\nOptimizing for {target}")
             best_params, best_train_metric, best_test_metric, optimization_results = (
-                optimize_strategy(train_data, test_data, param_ranges, target)
-            )
+                optimize_strategy(train_data, test_data, param_ranges, target))
 
             print(f"Best parameters: {best_params}")
             print(f"Best train metric: {best_train_metric}")
@@ -166,8 +165,7 @@ def main():
         else:
             lowest_feasible_return = None
             print(
-                f"Warning: 'annualized_return' not found in results for {target}"
-            )
+                f"Warning: 'annualized_return' not found in results for {target}")
 
         summary_stats[target] = {
             'optimization_target': target,
@@ -195,8 +193,9 @@ def main():
     print("\nTop 5 Performers (Optimized End Equity):")
     for i, performer in enumerate(top_performers[:5], 1):
         print(
-            f"{i}. {performer['currency_pair']}: ${performer['end_equity']:,.2f}"
-        )
+            f"{i}. {
+                performer['currency_pair']}: ${
+                performer['end_equity']:,.2f}")
 
     # Save top 5 performers to CSV
     top_performers_df = pd.DataFrame(top_performers[:5])

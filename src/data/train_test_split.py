@@ -8,7 +8,7 @@ the data, which is crucial for financial time series analysis.
 """
 
 
-def split_data(data, train_ratio=3/4):
+def split_data(data, train_ratio=3 / 4):
     """
     Split time series data into training and testing sets chronologically.
 

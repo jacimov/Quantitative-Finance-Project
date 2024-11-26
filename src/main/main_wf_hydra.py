@@ -53,7 +53,7 @@ def main():
 
     This function implements an enhanced version
     of the walk-forward optimization
-    process with finer parameter granularity 
+    process with finer parameter granularity
     and broader currency pair coverage.
     It is designed for deployment in high-performance computing environments.
 
@@ -214,9 +214,8 @@ def main():
             all_results[target].append(result)
 
             # Calculate and plot benchmark comparison
-            buy_hold_equity = (
-                INITIAL_CAPITAL * (1 + test_data['Close'].pct_change()).cumsum()
-            )
+            cumsum_returns = (1 + test_data['Close'].pct_change()).cumsum()
+            buy_hold_equity = INITIAL_CAPITAL * cumsum_returns
 
             plot_equity_curves(
                 equity_curve,
@@ -252,7 +251,7 @@ def main():
     summary_stats = {}
     for target in optimization_targets:
         results_df = pd.DataFrame(all_results[target])
-        
+
         summary_stats[target] = {
             'mean_return': results_df['final_test_annualized_return'].mean(),
             'mean_sharpe': results_df['final_test_sharpe_ratio'].mean(),

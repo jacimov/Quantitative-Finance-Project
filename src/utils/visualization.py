@@ -1,7 +1,7 @@
 """
 Visualization Module
 
-This module provides visualization tools 
+This module provides visualization tools
 for analyzing trading strategy performance
 and parameter optimization results. It includes functionality for creating:
 1. Parameter optimization heatmaps
@@ -77,11 +77,11 @@ def plot_heatmaps(
     n_cols = min(2, n_plots)
     n_rows = (n_plots + 1) // 2
     fig, axs = plt.subplots(n_rows, n_cols, figsize=(20, 10 * n_rows))
-    fig.suptitle(
-        f'Parameter Optimization Heatmaps - {optimization_target.capitalize()}',
-        fontsize=16,
-        y=1.02
+    title = (
+        f'Parameter Optimization Heatmaps - '
+        f'{optimization_target.capitalize()}'
     )
+    fig.suptitle(title, fontsize=16, y=1.02)
 
     if n_plots == 1:
         axs = np.array([[axs]])

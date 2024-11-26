@@ -18,13 +18,13 @@ class TestBacktestingRunner(unittest.TestCase):
         """Set up test data."""
         # Set random seed for reproducibility
         np.random.seed(42)
-        
+
         # Create sample OHLCV data with strong trend
         dates = pd.date_range(start='2023-01-01', periods=100, freq='D')
         trend = np.linspace(0, 10, 100)  # Strong upward trend
         noise = np.random.randn(100) * 0.5
         price = 100 + trend + noise
-        
+
         self.sample_data = pd.DataFrame({
             'Open': price + np.random.randn(100) * 0.1,
             'High': price + np.abs(np.random.randn(100)) * 0.2,
@@ -48,11 +48,11 @@ class TestBacktestingRunner(unittest.TestCase):
     def test_basic_backtest(self):
         """Test basic backtesting functionality."""
         result = run_single_backtest(self.sample_data, self.sample_params)
-        
+
         # Check that result contains essential metrics
         self.assertIsInstance(result, pd.Series)
         self.assertIn('_equity_curve', result.index)
-        
+
         # Check that equity starts at initial cash
         equity_curve = result['_equity_curve']
         self.assertAlmostEqual(
@@ -69,7 +69,7 @@ class TestBacktestingRunner(unittest.TestCase):
             cash=50000,
             commission=0.002
         )
-        
+
         # Check that equity starts at custom initial cash
         equity_curve = result['_equity_curve']
         self.assertAlmostEqual(
@@ -93,7 +93,7 @@ class TestBacktestingRunner(unittest.TestCase):
             self.sample_data,
             aggressive_params
         )
-        
+
         # Test with more conservative position sizing
         conservative_params = self.sample_params.copy()
         conservative_params.update({
@@ -107,14 +107,17 @@ class TestBacktestingRunner(unittest.TestCase):
             self.sample_data,
             conservative_params
         )
-        
+
         # Compare results
         aggressive_equity = aggressive_result['_equity_curve']['Equity']
         conservative_equity = conservative_result['_equity_curve']['Equity']
-        
+
+        # Calculate normalized volatility
+        norm_vol = aggressive_equity.std() / aggressive_equity.mean()
+
         # Aggressive strategy should have higher volatility
         self.assertGreater(
-            aggressive_equity.std() / aggressive_equity.mean(),  # Normalized volatility
+            norm_vol,
             conservative_equity.std() / conservative_equity.mean()
         )
 
@@ -124,9 +127,9 @@ class TestBacktestingRunner(unittest.TestCase):
         invalid_params = {}  # No parameters at all
         with self.assertRaises(Exception):
             run_single_backtest(self.sample_data, invalid_params)
-        
-        # Test with invalid data format
-        invalid_data = pd.DataFrame({'A': [1, 2, 3]})  # Missing required columns
+
+        # Create invalid dataset missing required columns
+        invalid_data = pd.DataFrame({'A': [1, 2, 3]})
         with self.assertRaises(Exception):
             run_single_backtest(invalid_data, self.sample_params)
 
@@ -140,24 +143,27 @@ class TestBacktestingRunner(unittest.TestCase):
             'short_size': 2.0
         })
         result = run_single_backtest(self.sample_data, max_params)
-        
+
         # Get trades and equity data
         trades_df = result['_trades']
         equity_curve = result['_equity_curve']
-        
+
         # Calculate position values and leverage for each trade
-        position_values = trades_df['Size'].astype(float).abs() * trades_df['EntryPrice'].astype(float)
+        position_values = (trades_df['Size'].astype(float).abs() *
+                           trades_df['EntryPrice'].astype(float))
         leverage = position_values / equity_curve['Equity'].iloc[0]
-        
+
         # Check leverage constraint (5x)
         self.assertTrue(all(leverage <= 5.0))
-        
+
         # Check that position sizes are whole numbers
         sizes = trades_df['Size'].astype(float).abs()
         self.assertTrue(all(sizes == sizes.round()))
-        
+
         # Check that no position exceeds 95% of equity
-        self.assertTrue(all(position_values <= 0.95 * equity_curve['Equity'].iloc[0]))
+        initial_equity = equity_curve['Equity'].iloc[0]
+        self.assertTrue(all(position_values <= 0.95 * initial_equity))
+
 
 if __name__ == '__main__':
     unittest.main()

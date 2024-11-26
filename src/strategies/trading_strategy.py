@@ -185,22 +185,25 @@ class OptimizedLongShortStrategy(Strategy):
         MAX_LEVERAGE = 5.0
         # Maximum position size (95% of capital)
         MAX_POSITION = 0.95
-        
+
         # Get direction-specific size multiplier
         size_multiplier = self.long_size if direction > 0 else self.short_size
-        
+
+        # Calculate position size with constraints
+        position_size = min(self.position_size * size_multiplier, MAX_POSITION)
+
         # Calculate base position value
-        base_value = self.equity * min(self.position_size * size_multiplier, MAX_POSITION)
-        
+        base_value = self.equity * position_size
+
         # Calculate maximum value based on leverage constraint
         max_leverage_value = MAX_LEVERAGE * self.equity
-        
+
         # Calculate constrained value
         constrained_value = min(base_value, max_leverage_value)
-        
+
         # Convert to units
         units = constrained_value / price
-        
+
         # Round to nearest whole number of units
         return round(units)
 
@@ -233,10 +236,19 @@ class OptimizedLongShortStrategy(Strategy):
                 units = self.calculate_position_size(price, direction=-1)
                 if units > 0:  # Only trade if we have at least 1 unit
                     self.sell(size=units)
-        elif self.position.is_long and self.data.Close[-1] > self.data.High[-2]:
-            self.position.close()
-        elif self.position.is_short and self.data.Close[-1] < self.data.Low[-2]:
-            self.position.close()
+        else:
+            # Check if long position should be closed
+            is_long_close = (self.position.is_long and
+                             self.data.Close[-1] > self.data.High[-2])
+
+            # Check if short position should be closed
+            is_short_close = (self.position.is_short and
+                              self.data.Close[-1] < self.data.Low[-2])
+
+            if is_long_close:
+                self.position.close()
+            elif is_short_close:
+                self.position.close()
 
     def next_signal(self, data):
         """
@@ -249,16 +261,16 @@ class OptimizedLongShortStrategy(Strategy):
             Dict with signal details or None if no signal
         """
         self.data = data
-        
+
         # Calculate indicators
         self.atr = self.calculate_atr(self.atr_period)
         self.high = self.calculate_high(self.high_period)
         self.low = self.calculate_low(self.low_period)
         self.lower_band = self.calculate_lower_band()
         self.upper_band = self.calculate_upper_band()
-        
+
         price = data.Close.iloc[-1]
-        
+
         # Check for signals
         if price < self.lower_band[-1]:
             # Long signal
@@ -276,7 +288,7 @@ class OptimizedLongShortStrategy(Strategy):
                     'action': 'sell',
                     'size': units
                 }
-                
+
         # Check for exit signals
         if hasattr(self, 'position') and self.position:
             if self.position.is_long and price > data.High.iloc[-2]:
@@ -289,5 +301,5 @@ class OptimizedLongShortStrategy(Strategy):
                     'action': 'buy',  # Close short position
                     'size': self.position.size
                 }
-        
+
         return None
