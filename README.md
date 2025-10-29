@@ -60,6 +60,17 @@ cd BlackBoxes
 pip install -r requirements.txt
 ```
 
+3. **Set up API credentials (Important!)**
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your actual API keys
+# Never commit the .env file to version control!
+```
+
+See [SECURITY.md](SECURITY.md) for detailed instructions on protecting your API keys.
+
 ## Usage
 
 ### Running a Backtest
@@ -97,16 +108,23 @@ print(results.metrics)
 
 ### Running Live Trading
 
+⚠️ **Security Warning**: Never hardcode your API keys! Always use environment variables.
+
 ```python
+import os
+from dotenv import load_dotenv
 from live_trader import LiveTrader
+
+# Load credentials from .env file
+load_dotenv()
 
 # Initialize the live trader
 trader = LiveTrader(
     exchange_id='binance',  # or your preferred exchange
     symbol='BTC/USDT',      # trading pair
     timeframe='5m',         # candle timeframe
-    api_key='YOUR_API_KEY',
-    api_secret='YOUR_API_SECRET'
+    api_key=os.getenv('BINANCE_API_KEY'),
+    api_secret=os.getenv('BINANCE_API_SECRET')
 )
 
 # Start trading

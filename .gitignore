@@ -8,6 +8,8 @@ htmlcov/
 
 # Environment
 .env
+.env.*
+!.env.example
 .venv
 env/
 venv/
@@ -19,8 +21,20 @@ ENV/
 *.swp
 *.swo
 
-# Private Keys
+# Private Keys and Certificates
 kalshi_private_key.pem
+*.pem
+*.key
+*.p12
+*.pfx
+*.cer
+*.crt
+
+# API Keys and Secrets (additional patterns)
+*_secret*
+*_token*
+credentials.json
+secrets.json
 
 # OS
 .DS_Store
@@ -30,3 +44,4 @@ Thumbs.db
 results/
 *.log
 config/*.local.yaml
+config/credentials*
